@@ -199,9 +199,9 @@ alert("Clicked");
 authStatus.textContent = "Authenticating...";
 try {
 await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-'alert(err.message);,'
+'alert(err.message)'
 } catch (err) {
-authStatus.textContent = err.message; });
+appStatus.textContent = err.message;
 }
 });
 
