@@ -192,6 +192,7 @@ userDisplay.textContent = "";
 }
 });
 
+ window.addEventListener("DOMContentLoaded", () => {
 // Sign In
 loginBtn.addEventListener("click", async () => {
 alert("Clicked");
@@ -200,7 +201,7 @@ try {
 await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
 'alert(err.message);,'
 } catch (err) {
-authStatus.textContent = err.message;
+authStatus.textContent = err.message; });
 }
 });
 
