@@ -194,7 +194,7 @@ userDisplay.textContent = "";
 
 // Sign In
 loginBtn.addEventListener("click", async () => {
-console.log("Clicked");
+alert("Clicked");
 authStatus.textContent = "Authenticating...";
 try {
 await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
