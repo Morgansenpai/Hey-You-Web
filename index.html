@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Hey You Companion</title>
+<style>
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+body {
+background-color: #0f172a;
+color: #f8fafc;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+.card {
+background-color: #1e293b;
+border: 1px solid #334155;
+border-radius: 12px;
+padding: 24px;
+width: 100%;
+max-width: 480px;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+h1 {
+font-size: 1.5rem;
+margin-bottom: 8px;
+text-align: center;
+}
+p.subtitle {
+color: #94a3b8;
+font-size: 0.875rem;
+margin-bottom: 20px;
+text-align: center;
+}
+.field {
+margin-bottom: 16px;
+}
+label {
+display: block;
+font-size: 0.875rem;
+margin-bottom: 6px;
+color: #cbd5e1;
+}
+input, textarea {
+width: 100%;
+padding: 10px 12px;
+background-color: #0f172a;
+border: 1px solid #475569;
+border-radius: 8px;
+color: #f8fafc;
+font-size: 0.95rem;
+}
+textarea {
+resize: vertical;
+min-height: 90px;
+}
+input:focus, textarea:focus {
+outline: none;
+border-color: #38bdf8;
+}
+button {
+width: 100%;
+padding: 12px;
+background-color: #38bdf8;
+color: #0f172a;
+border: none;
+border-radius: 8px;
+font-weight: 600;
+font-size: 1rem;
+cursor: pointer;
+margin-top: 8px;
+}
+button:hover {
+background-color: #0ea5e9;
+}
+button:disabled {
+background-color: #475569;
+cursor: not-allowed;
+}
+.status {
+margin-top: 16px;
+font-size: 0.875rem;
+text-align: center;
+min-height: 20px;
+color: #38bdf8;
+}
+audio {
+width: 100%;
+margin-top: 16px;
+display: none;
+}
+.hidden {
+display: none;
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="authSection">
+<h1>Hey You Companion</h1>
+<p class="subtitle">Account Access</p>
+<div class="field">
+<label for="email">Email</label>
+<input type="email" id="email" placeholder="name@example.com" />
+</div>
+<div class="field">
+<label for="password">Password</label>
+<input type="password" id="password" placeholder="••••••••" />
+</div>
+<button id="loginBtn">Sign In</button>
+<button id="signupBtn" style="background: transparent; color: #94a3b8; border: 1px solid #475569; margin-top: 10px;">Create Account</button>
+<div class="status" id="authStatus"></div>
+</div>
+
+<div class="card hidden" id="appSection">
+<h1>Companion Dashboard</h1>
+<p class="subtitle" id="userDisplay"></p>
+
+<div class="field">
+<label for="scriptText">Voice Script</label>
+<textarea id="scriptText" placeholder="Enter message to generate speech..."></textarea>
+</div>
+
+<button id="generateBtn">Generate Audio</button>
+<audio id="audioPlayer" controls></audio>
+<div class="status" id="appStatus"></div>
+
+<button id="logoutBtn" style="background: transparent; color: #ef4444; border: 1px solid #ef4444; margin-top: 24px;">Sign Out</button>
+</div>
+
+<!-- Firebase Scripts -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+getAuth,
+signInWithEmailAndPassword,
+createUserWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDP4DiJpagDIXz8gGCrUAbMxhgF-HzGvyw",
+authDomain: "hey-you-companion.firebaseapp.com",
+projectId: "hey-you-companion",
+storageBucket: "hey-you-companion.firebasestorage.app",
+messagingSenderId: "1061661966821",
+appId: "1:1061661966821:web:e4599453150421b53fef0c"
+};
+
+const ELEVENLABS_API_KEY = "sk_2d86c363f3c56a289ff61bd1573432d744264317a14fb1ba";
+const ELEVENLABS_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// DOM Elements
+const authSection = document.getElementById("authSection");
+const appSection = document.getElementById("appSection");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const authStatus = document.getElementById("authStatus");
+const userDisplay = document.getElementById("userDisplay");
+const scriptText = document.getElementById("scriptText");
+const generateBtn = document.getElementById("generateBtn");
+const audioPlayer = document.getElementById("audioPlayer");
+const appStatus = document.getElementById("appStatus");
+
+// Auth State Observer
+onAuthStateChanged(auth, (user) => {
+if (user) {
+authSection.classList.add("hidden");
+appSection.classList.remove("hidden");
+userDisplay.textContent = Logged in as: ${user.email}`;
+} else {
+authSection.classList.remove("hidden");
+appSection.classList.add("hidden");
+userDisplay.textContent = "";
+}
+});
+
+// Sign In
+loginBtn.addEventListener("click", async () => {
+authStatus.textContent = "Authenticating...";
+try {
+await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+authStatus.textContent = "";
+} catch (err) {
+authStatus.textContent = err.message;
+}
+});
+
+// Create Account
+signupBtn.addEventListener("click", async () => {
+authStatus.textContent = "Creating account...";
+try {
+await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+authStatus.textContent = "";
+} catch (err) {
+authStatus.textContent = err.message;
+}
+});
+
+// Sign Out
+logoutBtn.addEventListener("click", async () => {
+await signOut(auth);
+});
+
+// ElevenLabs Generation
+generateBtn.addEventListener("click", async () => {
+const text = scriptText.value.trim();
+if (!text) {
+appStatus.textContent = "Please enter some text.";
+return;
+}
+
+generateBtn.disabled = true;
+appStatus.textContent = "Generating voice line...";
+
+try {
+const response = await fetch(https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`, {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+"xi-api-key": ELEVENLABS_API_KEY
+},
+body: JSON.stringify({
+text: text,
+model_id: "eleven_monolingual_v1",
+voice_settings: {
+stability: 0.5,
+similarity_boost: 0.75
+}
+})
+});
+
+if (!response.ok) {
+throw new Error(Generation failed with code ${response.status});
+}
+
+const audioBlob = await response.blob();
+const audioUrl = URL.createObjectURL(audioBlob);
+audioPlayer.src = audioUrl;
+audioPlayer.style.display = "block";
+audioPlayer.play();
+appStatus.textContent = "Audio ready.";
+} catch (err) {
+appStatus.textContent = err.message;
+} finally {
+generateBtn.disabled = false;
+}
+});
+</script>
+</body>
+</html>
