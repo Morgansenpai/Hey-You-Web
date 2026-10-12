@@ -218,6 +218,27 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 
+
+/* App shell design system */
+#app{min-height:100svh;padding-bottom:86px;color:#f1f0ed;font-family:'DM Sans',sans-serif}
+#app header,.topbar,.app-topbar{background:rgba(9,10,12,.86);border-bottom:1px solid rgba(255,255,255,.07);backdrop-filter:blur(18px)}
+#app h1,#app h2,#app h3{font-family:'Manrope','DM Sans',sans-serif;letter-spacing:-.045em}
+#app h1{font-size:clamp(30px,4vw,46px);line-height:1.08;font-weight:750}
+#app h2{font-size:clamp(20px,2.4vw,28px);line-height:1.2;font-weight:700}
+#app p{line-height:1.65}
+#app .panel,#app .task-card,#app .companion-card,#app .settings-card,#app .partner-card,#app form{border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,rgba(21,23,28,.96),rgba(14,16,19,.98));border-radius:15px;box-shadow:0 12px 36px rgba(0,0,0,.12)}
+#app label{font-size:11px;letter-spacing:.04em;color:#b5b6bb}
+#app input,#app textarea,#app select{background:#0a0c0f;border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#f2f0ec;padding:12px 13px}
+#app input::placeholder,#app textarea::placeholder{color:#62656d}
+#app button{min-height:40px;font-size:12px;font-weight:600;letter-spacing:-.005em}
+#app .primary-btn,#app button[type=submit]{background:linear-gradient(135deg,#f28a4b,#df6a30);border:1px solid rgba(255,177,125,.24);color:#160c07;box-shadow:0 6px 20px rgba(244,123,53,.1)}
+#app nav,#app .bottom-nav,#app .app-nav{background:rgba(11,12,15,.94);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)}
+#app .active{color:#ffad73}
+#app .muted,#app small{color:#898b92}
+#auth{background:radial-gradient(ellipse at 50% 0%,rgba(244,123,53,.09),transparent 30rem),#08090b}
+#auth h1,#auth h2{font-family:'Manrope',sans-serif;letter-spacing:-.055em}
+@media(max-width:600px){#app{padding-left:16px;padding-right:16px}#app h1{font-size:32px}#app .panel,#app .task-card,#app .companion-card,#app .settings-card,#app .partner-card{border-radius:12px}}
+
 </style>
 </head>
 <body>
