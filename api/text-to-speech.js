@@ -111,11 +111,14 @@ module.exports = async function handler(req, res) {
     if (!upstream.ok) {
       const upstreamBody = await upstream.text();
       console.error("ElevenLabs request failed:", upstream.status, upstreamBody.slice(0, 500));
-      return res.status(upstream.status === 429 ? 429 : 502).json({
-        error: upstream.status === 429
-          ? "The voice service is busy or has reached its quota. Try again later."
-          : "Voice generation failed. Check the server's ElevenLabs configuration."
-      });
+      let message = "Voice generation failed. Check the server configuration.";
+      if (upstream.status === 401) message = "ElevenLabs rejected the API key. Check ELEVENLABS_API_KEY in Vercel.";
+      else if (upstream.status === 403) message = "This ElevenLabs key does not have permission to use this voice or model.";
+      else if (upstream.status === 404) message = "The configured ElevenLabs voice ID was not found.";
+      else if (upstream.status === 422) message = "ElevenLabs rejected the voice request. Check the voice ID and model settings.";
+      else if (upstream.status === 429) message = "ElevenLabs has reached a rate or usage limit. Check your account quota and try again.";
+      else if (upstream.status === 402) message = "The ElevenLabs account has insufficient credits for this request.";
+      return res.status(upstream.status === 429 ? 429 : 502).json({ error: message, provider_status: upstream.status });
     }
 
     const audio = Buffer.from(await upstream.arrayBuffer());
