@@ -116,6 +116,46 @@ body{color:var(--white);background:#050505;font-family:Inter,ui-sans-serif,syste
 @media(max-width:520px){.app-container .welcome{align-items:flex-start}.today-date{display:none}.companion-grid{grid-template-columns:1fr}.form-row{gap:8px}.form-row .field label{font-size:9px}.setting-row{align-items:flex-start;flex-direction:column;gap:12px}.setting-row .badge{white-space:normal}.rest-hours{width:100%}.rest-hours input{flex:1;min-width:0}.bottom-nav{height:70px}.nav-btn{min-width:0;flex:1;font-size:8px;letter-spacing:0}.nav-btn span{display:none}.section-heading{align-items:flex-start;flex-direction:column}.section-heading>.primary-btn,.section-heading>.small-btn{align-self:flex-start}}
 @media(prefers-reduced-motion:reduce){.app-screen.active{animation:none}.mini-orb{animation:none}}
 
+
+/* Premium visual refinement — quieter typography, disciplined contrast, precise spacing */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{
+ --black:#08090b;--carbon:#0c0e11;--panel:#111419;--panel2:#171a20;
+ --orange:#f47b35;--orange-light:#ffad73;--white:#f3f1ed;--silver:#a5a7ad;
+ --mute:#747780;--line:rgba(255,255,255,.09);
+}
+html{background:#08090b;color:var(--white);font-family:'DM Sans',sans-serif;letter-spacing:-.012em}
+body{background:radial-gradient(ellipse at 76% 25%,rgba(244,123,53,.075),transparent 34rem),#08090b;font-family:'DM Sans',sans-serif}
+h1,h2,h3,.hero h1,.dashboard-title,.section-title{font-family:'Manrope','DM Sans',sans-serif;letter-spacing:-.055em}
+button,input,textarea,select{font-family:'DM Sans',sans-serif}
+button{transition:background .22s ease,border-color .22s ease,transform .22s ease,box-shadow .22s ease}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--orange-light);outline-offset:3px}
+#landing{min-height:100svh;padding:clamp(24px,5vw,72px);background:radial-gradient(ellipse at 73% 48%,rgba(244,123,53,.055),transparent 28rem)}
+.grid-bg{opacity:.16;background-size:56px 56px;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)}
+.glow{width:340px;height:340px;background:rgba(244,123,53,.09);filter:blur(115px)}
+.hero{width:min(1180px,100%);text-align:left;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);align-items:center;column-gap:clamp(30px,7vw,100px);row-gap:26px}
+.hero .logo-label{grid-column:1;margin:0 0 22px;font-size:10px;letter-spacing:.2em;color:#b7b8bd}
+.hero h1{grid-column:1;font-size:clamp(54px,7.2vw,94px);line-height:.99;letter-spacing:-.075em;font-weight:800;max-width:650px;text-wrap:balance}
+.hero-description{grid-column:1;margin:24px 0 26px;max-width:440px;font-size:15px;line-height:1.8;color:#a0a2a8}
+.primary-btn{grid-column:1;justify-self:start;border:1px solid rgba(255,173,115,.25);border-radius:9px;background:linear-gradient(135deg,#f48a49,#dc6227);box-shadow:0 8px 30px rgba(244,123,53,.12);font-weight:700;letter-spacing:-.01em}
+.primary-btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(244,123,53,.2);background:linear-gradient(135deg,#ff9b5c,#e76c30)}
+.hero .orb-wrap,.orb-wrap,.orb-container,.hero-visual{grid-column:2;grid-row:1 / span 5;justify-self:center;align-self:center}
+.metal{background:linear-gradient(180deg,#f7f5f0 0%,#c4c5c8 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.orange-text{color:#f28a4b;text-shadow:none}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:#f28a4b;box-shadow:0 0 16px rgba(244,123,53,.28)}
+/* Preserve the orb geometry; soften its light so it reads as a designed object rather than a flat neon ball. */
+.orb,.sphere,.orange-orb,.jarvis-orb{box-shadow:inset -22px -28px 45px rgba(106,39,9,.22),inset 12px 10px 26px rgba(255,223,178,.28),0 0 70px rgba(244,123,53,.12)!important}
+@media(max-width:760px){
+ #landing{padding:28px 23px 40px}
+ .hero{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:0}
+ .hero .logo-label{margin-bottom:25px}
+ .hero h1{font-size:clamp(49px,14vw,76px);line-height:.98;max-width:100%}
+ .hero-description{margin:21px 0 24px;font-size:14px;max-width:38rem}
+ .hero .orb-wrap,.orb-wrap,.orb-container,.hero-visual{order:2;align-self:center;margin:32px auto 18px}
+ .primary-btn{align-self:flex-start}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 <body>
