@@ -349,7 +349,7 @@ async function generateVoice() {
       let errorMessage = "Voice generation failed.";
       try {
         const errorData = await response.json();
-        errorMessage = errorData?.detail?.message || errorData?.detail || errorMessage;
+        errorMessage = errorData?.error || errorData?.detail?.message || errorData?.detail || errorMessage;
       } catch (e) {}
       throw new Error(errorMessage);
     }
