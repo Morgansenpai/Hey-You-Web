@@ -253,6 +253,19 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .companion-card:hover,.companion-card.selected{border-color:#8b6ac4aa;box-shadow:0 0 0 1px #8b6ac422,0 16px 38px #0008}
 .section-heading .eyebrow span{background:#9b82c3;box-shadow:0 0 12px #8b6ac455}
 
+
+/* Landing-page motion polish */
+.landing-nav{animation:landingRise .75s .05s cubic-bezier(.2,.75,.25,1) both}
+.hero-copy{animation:landingRise .9s .16s cubic-bezier(.2,.75,.25,1) both}
+.orb-stage{animation:landingRise 1s .12s cubic-bezier(.2,.75,.25,1) both}
+.landing-bottom{animation:landingRise .8s .28s cubic-bezier(.2,.75,.25,1) both}
+.orb-core::after{content:"";position:absolute;inset:-35%;border-radius:50%;pointer-events:none;background:linear-gradient(112deg,transparent 35%,#fff4 47%,#ffcf9b24 52%,transparent 64%);transform:translateX(-75%) rotate(-18deg);animation:orbSheen 8s ease-in-out infinite}
+.status-light{animation:statusPulse 2.4s ease-in-out infinite}
+@keyframes landingRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes orbSheen{0%,22%{transform:translateX(-75%) rotate(-18deg)}58%,100%{transform:translateX(75%) rotate(-18deg)}}
+@keyframes statusPulse{0%,100%{opacity:.65;box-shadow:0 0 5px #d96d3266}50%{opacity:1;box-shadow:0 0 13px #d96d32cc}}
+@media(prefers-reduced-motion:reduce){.landing-nav,.hero-copy,.orb-stage,.landing-bottom,.orb-core,.orb-core::after,.orb-halo,.orb-orbit,.status-light,.status-bars i{animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -506,7 +519,12 @@ window.addEventListener("load", () => setTimeout(() => loader.classList.add("hid
 
 enterBtn.addEventListener("click", () => {
   landing.classList.add("hidden");
-  authSection.classList.remove("hidden");
+  if (auth.currentUser) {
+    authSection.classList.add("hidden");
+    appSection.style.display = "block";
+  } else {
+    authSection.classList.remove("hidden");
+  }
 });
 
 loginBtn.addEventListener("click", async () => {
@@ -571,9 +589,10 @@ function getFirebaseError(error) {
 
 onAuthStateChanged(auth, user => {
   if (user) {
-    landing.classList.add("hidden");
+    // Keep the landing page visible on arrival, even for returning signed-in users.
+    landing.classList.remove("hidden");
     authSection.classList.add("hidden");
-    appSection.style.display = "block";
+    appSection.style.display = "none";
     const email = user.email || "User";
     userDisplay.textContent = "Signed in as " + email;
     document.getElementById("settingsEmail").textContent = email;
