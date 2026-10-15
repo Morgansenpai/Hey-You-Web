@@ -266,6 +266,37 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 @keyframes statusPulse{0%,100%{opacity:.65;box-shadow:0 0 5px #d96d3266}50%{opacity:1;box-shadow:0 0 13px #d96d32cc}}
 @media(prefers-reduced-motion:reduce){.landing-nav,.hero-copy,.orb-stage,.landing-bottom,.orb-core,.orb-core::after,.orb-halo,.orb-orbit,.status-light,.status-bars i{animation:none!important;transition:none!important}}
 
+
+/* Premium violet accents — used sparingly alongside the signature orange */
+:root{
+  --purple:#8b5cf6;
+  --purple-soft:#b49af5;
+  --purple-line:rgba(139,92,246,.24);
+  --purple-glow:rgba(139,92,246,.12);
+}
+body{
+  background:
+    radial-gradient(ellipse at 92% 12%,rgba(139,92,246,.075),transparent 30rem),
+    radial-gradient(ellipse at 4% 88%,rgba(139,92,246,.045),transparent 26rem),
+    #050505;
+}
+.landing-ambient-purple{background:rgba(139,92,246,.15)}
+.orb-orbit-two{border-color:rgba(180,154,245,.27)}
+.orb-inner-glow{border-color:rgba(180,154,245,.14)}
+.brand-mark{border-color:rgba(139,92,246,.42);box-shadow:inset 0 1px rgba(255,255,255,.06),0 0 24px rgba(139,92,246,.06)}
+.mini-shield{color:var(--purple-soft)}
+.auth-card{box-shadow:0 30px 100px #000b,0 0 65px rgba(139,92,246,.07)}
+.field input:focus,.field textarea:focus,#scriptText:focus{border-color:rgba(139,92,246,.7);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
+.badge{border-color:rgba(139,92,246,.28);background:rgba(139,92,246,.055)}
+.wave-bar{background:linear-gradient(#c9b4ff 0%,#8b5cf6 48%,#d96d32 100%)}
+.status-light{box-shadow:0 0 11px rgba(139,92,246,.8),0 0 20px rgba(139,92,246,.22)}
+.nav-btn.active,.nav-btn:focus-visible{color:#c4afff}
+.nav-btn.active::before{background:var(--purple);box-shadow:0 0 12px rgba(139,92,246,.8)}
+.progress-ring{background:conic-gradient(var(--purple) 0deg,var(--purple) var(--progress,0deg),#2b2b30 var(--progress,0deg),#2b2b30 360deg)}
+.logout-btn:hover{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.08)}
+.small-btn:hover{border-color:rgba(139,92,246,.45);box-shadow:0 0 18px rgba(139,92,246,.06)}
+@media(prefers-reduced-motion:reduce){.landing-ambient-purple{filter:none}}
+
 </style>
 </head>
 <body>
