@@ -498,9 +498,7 @@ export default function HeyYouCompanionApp() {
       nextTask = {
         ...task,
         dueDate: nextDate.toISOString().split("T")[0],
-        completedOccurrences: [
-          ...new Set([...task.completedOccurrences, todayStr]),
-        ],
+        completedOccurrences: Array.from(new Set([...task.completedOccurrences, todayStr])),
         snoozedUntil: null,
         followUpCount: 0,
         updatedAt: now.toISOString(),
