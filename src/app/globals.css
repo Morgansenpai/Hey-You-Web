@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #050505;
+  color: #F5F4F2;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+.architectural-grid {
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+}
+
+.fine-border {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.fine-border-copper {
+  border: 1px solid rgba(217, 121, 59, 0.35);
+}
+
+.fine-border-violet {
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.metallic-button {
+  background: linear-gradient(135deg, #FDE6C4 0%, #F0A868 28%, #D9793B 68%, #8C421A 100%);
+  color: #050505;
+  font-weight: 600;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.metallic-button:hover {
+  opacity: 0.94;
+}
+
+.metallic-button:active {
+  transform: scale(0.99);
+}
