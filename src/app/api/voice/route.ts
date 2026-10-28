@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.ELEVENLABS_API_KEY;
-    if (!apiKey) {
+    if (!apiKey?.trim()) {
       return NextResponse.json(
         {
           fallback: true,
@@ -67,16 +67,13 @@ export async function POST(req: NextRequest) {
 
     if (!elevenRes.ok) {
       const errorDetail = await elevenRes.text();
-      return NextResponse.json(
-        {
-          fallback: true,
-          reason: `ElevenLabs API returned status ${elevenRes.status}: ${errorDetail.slice(
-            0,
-            180
-          )}`,
-        },
-        { status: 200 }
-      );
+      let reason = `ElevenLabs could not generate audio (HTTP ${elevenRes.status}). Check the API key, account credits, and selected voice access.`;
+      try {
+        const parsed = JSON.parse(errorDetail);
+        const detail = parsed?.detail?.message || parsed?.detail?.status || parsed?.message;
+        if (detail && !/api.?key|authorization|credential|secret/i.test(String(detail))) reason += ` Details: ${String(detail).slice(0, 120)}`;
+      } catch {}
+      return NextResponse.json({ fallback: true, reason }, { status: 200 });
     }
 
     const arrayBuffer = await elevenRes.arrayBuffer();
