@@ -1,50 +1,99 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import { NextRequest, NextResponse } from "next/server";
+import { AVAILABLE_VOICES } from "@/lib/defaults";
 
-:root {
-  color-scheme: dark;
+interface VoiceSynthesisRequest {
+  text: string;
+  voiceId: string;
+  stability?: number;
+  similarityBoost?: number;
+  styleExaggeration?: number;
 }
 
-body {
-  background-color: #050505;
-  color: #F5F4F2;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
+export async function POST(req: NextRequest) {
+  try {
+    const body = (await req.json()) as VoiceSynthesisRequest;
+    const text = (body.text || "").trim();
 
-.architectural-grid {
-  background-size: 48px 48px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-}
+    if (!text) {
+      return NextResponse.json(
+        { error: "Script text cannot be empty." },
+        { status: 400 }
+      );
+    }
 
-.fine-border {
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
+    if (text.length > 1000) {
+      return NextResponse.json(
+        { error: "Script exceeds the 1,000 character maximum per request." },
+        { status: 400 }
+      );
+    }
 
-.fine-border-copper {
-  border: 1px solid rgba(217, 121, 59, 0.35);
-}
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey?.trim()) {
+      return NextResponse.json(
+        {
+          fallback: true,
+          reason:
+            "ELEVENLABS_API_KEY is not configured on the server. Using explicitly labelled Browser Speech Synthesis fallback.",
+        },
+        { status: 200 }
+      );
+    }
 
-.fine-border-violet {
-  border: 1px solid rgba(139, 92, 246, 0.4);
-}
+    const matchedVoice =
+      AVAILABLE_VOICES.find((v) => v.id === body.voiceId) ||
+      AVAILABLE_VOICES[0];
 
-.metallic-button {
-  background: linear-gradient(135deg, #FDE6C4 0%, #F0A868 28%, #D9793B 68%, #8C421A 100%);
-  color: #050505;
-  font-weight: 600;
-  transition: opacity 0.2s ease, transform 0.15s ease;
-}
+    const elevenUrl = `https://api.elevenlabs.io/v1/text-to-speech/${matchedVoice.providerId}`;
 
-.metallic-button:hover {
-  opacity: 0.94;
-}
+    const elevenRes = await fetch(elevenUrl, {
+      method: "POST",
+      headers: {
+        "xi-api-key": apiKey,
+        "Content-Type": "application/json",
+        Accept: "audio/mpeg",
+      },
+      body: JSON.stringify({
+        text,
+        model_id: "eleven_multilingual_v2",
+        voice_settings: {
+          stability: body.stability ?? 0.6,
+          similarity_boost: body.similarityBoost ?? 0.8,
+          style: body.styleExaggeration ?? 0.25,
+          use_speaker_boost: true,
+        },
+      }),
+    });
 
-.metallic-button:active {
-  transform: scale(0.99);
+    if (!elevenRes.ok) {
+      const errorDetail = await elevenRes.text();
+      let safeReason = `ElevenLabs could not generate audio (HTTP ${elevenRes.status}). Check the API key, account credits, and selected voice access.`;
+      try {
+        const parsed = JSON.parse(errorDetail);
+        const detail = parsed?.detail?.message || parsed?.detail?.status || parsed?.message;
+        if (detail && !/api.?key|authorization|credential|secret/i.test(String(detail))) {
+          safeReason += ` Details: ${String(detail).slice(0, 120)}`;
+        }
+      } catch {}
+      return NextResponse.json({ fallback: true, reason: safeReason }, { status: 200 });
+    }
+
+    const arrayBuffer = await elevenRes.arrayBuffer();
+    const base64Audio = Buffer.from(arrayBuffer).toString("base64");
+    const audioDataUrl = `data:audio/mpeg;base64,${base64Audio}`;
+
+    return NextResponse.json({
+      fallback: false,
+      audioDataUrl,
+      provider: "elevenlabs",
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error:
+          error?.message || "Unexpected server error during voice generation.",
+      },
+      { status: 500 }
+    );
+  }
 }
