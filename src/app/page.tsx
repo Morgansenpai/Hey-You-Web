@@ -103,6 +103,7 @@ export default function HeyYouCompanionApp() {
 
   // Companion Builder State
   const [compName, setCompName] = useState("");
+  const [editingCompanionId, setEditingCompanionId] = useState<string | null>(null);
   const [compRel, setCompRel] = useState<RelationshipType>("Custom");
   const [compTemp, setCompTemp] = useState<Temperament>("Calm");
   const [compIntensity, setCompIntensity] = useState<IntensityLevel>("Firm");
@@ -579,36 +580,25 @@ export default function HeyYouCompanionApp() {
     e.preventDefault();
     if (!compName.trim()) return;
 
+    const existing = editingCompanionId ? allCompanions.find((item) => item.id === editingCompanionId) : undefined;
     const newCompanion: CompanionProfile = {
-      id: `custom-${Date.now()}`,
-      name: compName.trim(),
-      relationship: compRel,
-      temperament: compTemp,
-      intensity: compIntensity,
-      language: compLang,
-      voiceId: compVoiceId,
-      stability: compStability,
-      similarityBoost: compSimilarity,
-      styleExaggeration: compStyle,
-      speakingRate: compRate,
-      customInstructions:
-        compNotes.trim() ||
-        `Speak as a ${compTemp.toLowerCase()} ${compRel.toLowerCase()} with ${compIntensity.toLowerCase()} intensity.`,
-      isBuiltIn: false,
+      id: existing?.id || `custom-${Date.now()}`,
+      name: existing?.isBuiltIn ? existing.name : compName.trim(),
+      relationship: existing?.isBuiltIn ? existing.relationship : compRel,
+      temperament: compTemp, intensity: compIntensity, language: compLang,
+      voiceId: compVoiceId, stability: compStability, similarityBoost: compSimilarity,
+      styleExaggeration: compStyle, speakingRate: compRate,
+      customInstructions: compNotes.trim() || `Speak as a ${compTemp.toLowerCase()} ${(existing?.relationship || compRel).toLowerCase()} with ${compIntensity.toLowerCase()} intensity.`,
+      isBuiltIn: existing?.isBuiltIn || false, isAnimeArchetype: existing?.isAnimeArchetype || false,
     };
-
-    await persistWorkspace({
-      ...workspace,
-      customCompanions: [...workspace.customCompanions, newCompanion],
-      settings: {
-        ...workspace.settings,
-        defaultCompanionId: newCompanion.id,
-      },
-    });
-
-    setCompName("");
-    setCompNotes("");
-    setStatusBanner(`Created and activated companion "${newCompanion.name}".`);
+    const nextCustom = existing?.isBuiltIn
+      ? [...workspace.customCompanions.filter((item) => item.id !== newCompanion.id), newCompanion]
+      : editingCompanionId
+        ? workspace.customCompanions.map((item) => item.id === editingCompanionId ? newCompanion : item)
+        : [...workspace.customCompanions, newCompanion];
+    await persistWorkspace({ ...workspace, customCompanions: nextCustom, settings: { ...workspace.settings, defaultCompanionId: newCompanion.id } });
+    setCompName(""); setCompNotes(""); setEditingCompanionId(null);
+    setStatusBanner(`${existing ? "Updated" : "Created"} companion settings for "${newCompanion.name}".`);
   };
 
   const handleDeleteCompanion = async (compId: string) => {
@@ -1111,6 +1101,17 @@ export default function HeyYouCompanionApp() {
                         Snooze ({workspace.settings.defaultSnoozeMinutes}m)
                       </button>
                       <button
+                        onClick={() => {
+                          setEditingCompanionId(comp.id); setCompName(comp.isBuiltIn ? "" : comp.name);
+                          setCompRel(comp.relationship); setCompTemp(comp.temperament); setCompIntensity(comp.intensity);
+                          setCompLang(comp.language); setCompVoiceId(comp.voiceId); setCompStability(comp.stability);
+                          setCompSimilarity(comp.similarityBoost); setCompStyle(comp.styleExaggeration);
+                          setCompRate(comp.speakingRate); setCompNotes(comp.customInstructions);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl bg-bg-surface fine-border text-xs text-text-secondary"
+                      >Customize</button>
+                      <button
                         onClick={() =>
                           triggerCompanionReminder(
                             nextUpcomingTask,
@@ -1337,7 +1338,14 @@ export default function HeyYouCompanionApp() {
               <span className="text-xs uppercase tracking-[0.16em] text-violet-soft">
                 {activeCompanion.name} — {orbState.toUpperCase()}
               </span>
-              <MetallicOrb size={280} state={orbState} />
+              <MetallicOrb size={280} state={orbState} interactive onClick={() => triggerCompanionReminder({
+                id: "orb-preview", title: "staying focused on your priorities", description: "", dueDate: todayIso,
+                dueTime: "12:00", timeZone: "UTC", recurrence: "Once", companionId: activeCompanion.id,
+                reminderStages: [15], maxFollowUps: 1, followUpCount: 0, snoozedUntil: null,
+                completed: false, completedAt: null, completedOccurrences: [], firedStages: [],
+                sharedWithPartner: false, createdAt: todayIso, updatedAt: todayIso,
+              }, "Companion preview")} />
+              <span className="text-[11px] uppercase tracking-[0.18em] text-text-muted">Tap the orb to hear {activeCompanion.name}</span>
               <p className="text-xs text-text-secondary max-w-xs">
                 {activeCompanion.customInstructions}
               </p>
@@ -1645,7 +1653,7 @@ export default function HeyYouCompanionApp() {
                   required
                   value={compName}
                   onChange={(e) => setCompName(e.target.value)}
-                  placeholder="Sensei Kenji / Sister Ayo"
+                  placeholder="Give your companion a name"
                   className="w-full px-3.5 py-2 rounded-xl bg-bg-secondary fine-border text-sm"
                 />
               </div>
@@ -1808,12 +1816,10 @@ export default function HeyYouCompanionApp() {
                 />
               </div>
 
-              <button
-                type="submit"
-                className="w-full metallic-button py-2.5 rounded-xl text-xs font-semibold"
-              >
-                Save Custom Companion
-              </button>
+              <div className="flex gap-2">
+                <button type="submit" className="flex-1 metallic-button py-2.5 rounded-xl text-xs font-semibold">{editingCompanionId ? "Save Changes" : "Create Companion"}</button>
+                {editingCompanionId && <button type="button" onClick={() => { setEditingCompanionId(null); setCompName(""); setCompNotes(""); }} className="px-4 py-2.5 rounded-xl bg-bg-surface fine-border text-xs">Cancel</button>}
+              </div>
             </form>
 
             {/* Companion Roster */}
