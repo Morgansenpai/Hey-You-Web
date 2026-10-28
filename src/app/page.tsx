@@ -1650,7 +1650,7 @@ export default function HeyYouCompanionApp() {
                 </label>
                 <input
                   type="text"
-                  required
+                  required={!editingCompanionId}
                   value={compName}
                   onChange={(e) => setCompName(e.target.value)}
                   placeholder="Give your companion a name"
