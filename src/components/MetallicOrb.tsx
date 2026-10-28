@@ -7,11 +7,15 @@ export type OrbState = "idle" | "generating" | "speaking";
 interface MetallicOrbProps {
   size?: number;
   state?: OrbState;
+  onClick?: () => void;
+  interactive?: boolean;
 }
 
 export default function MetallicOrb({
   size = 320,
   state = "idle",
+  onClick,
+  interactive = false,
 }: MetallicOrbProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -244,15 +248,16 @@ export default function MetallicOrb({
   }, [size, state]);
 
   return (
-    <div
-      className="relative flex items-center justify-center select-none"
-      aria-label="Hey You Companion Metallic Orb"
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!interactive || !onClick}
+      aria-label={interactive ? "Interact with your companion orb" : "Hey You Companion metallic orb"}
+      title={interactive ? "Tap to hear your companion" : undefined}
+      className={`relative flex items-center justify-center select-none bg-transparent border-0 outline-none ${interactive && onClick ? "cursor-pointer rounded-full focus-visible:ring-2 focus-visible:ring-violet-400" : "cursor-default"}`}
+      style={{ WebkitTapHighlightColor: "transparent" }}
     >
-      <canvas
-        ref={canvasRef}
-        style={{ width: `${size}px`, height: `${size}px` }}
-        className="block"
-      />
-    </div>
+      <canvas ref={canvasRef} style={{ width: `${size}px`, height: `${size}px` }} className={`block transition-transform duration-500 ${interactive ? "hover:scale-[1.035] active:scale-[0.98]" : ""}`} />
+    </button>
   );
 }
