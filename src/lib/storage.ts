@@ -108,7 +108,10 @@ export async function saveUserWorkspace(
 export function getAllCompanions(
   customCompanions: CompanionProfile[]
 ): CompanionProfile[] {
-  return [...BUILT_IN_COMPANIONS, ...customCompanions];
+  const byId = new Map<string, CompanionProfile>();
+  BUILT_IN_COMPANIONS.forEach((companion) => byId.set(companion.id, companion));
+  customCompanions.forEach((companion) => byId.set(companion.id, companion));
+  return Array.from(byId.values());
 }
 
 export function isWithinQuietHours(
