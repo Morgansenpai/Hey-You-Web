@@ -48,3 +48,15 @@ body {
 .metallic-button:active {
   transform: scale(0.99);
 }
+
+
+/* Premium finish: layered surfaces, restrained highlights, and consistent controls */
+body {
+  background-image: radial-gradient(ellipse at 70% -10%, rgba(139, 92, 246, 0.075), transparent 42%), radial-gradient(ellipse at 10% 20%, rgba(217, 121, 59, 0.055), transparent 36%);
+  background-attachment: fixed;
+}
+button, input, textarea, select { transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid rgba(180, 154, 245, 0.72); outline-offset: 2px; }
+.bg-bg-elevated { background-image: linear-gradient(145deg, rgba(255,255,255,0.018), transparent 50%); box-shadow: 0 12px 34px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.025); }
+.metallic-button { background: linear-gradient(115deg, #f8e6cf 0%, #d8b08b 38%, #b77b50 72%, #8d5839 100%); box-shadow: 0 6px 22px rgba(183, 123, 80, 0.13), inset 0 1px 0 rgba(255,255,255,0.32); }
+.metallic-button:hover { filter: brightness(1.06); box-shadow: 0 8px 28px rgba(183, 123, 80, 0.2), inset 0 1px 0 rgba(255,255,255,0.38); }
