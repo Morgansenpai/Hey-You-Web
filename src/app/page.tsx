@@ -1662,6 +1662,7 @@ export default function HeyYouCompanionApp() {
                     {[
                       "Mom",
                       "Dad",
+                      "Brother",
                       "Boyfriend",
                       "Girlfriend",
                       "Best Friend",
