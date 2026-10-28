@@ -1818,8 +1818,19 @@ export default function HeyYouCompanionApp() {
             </form>
 
             {/* Companion Roster */}
-            <div className="lg:col-span-7 space-y-4">
-              {allCompanions.map((comp) => {
+            <div className="lg:col-span-7 space-y-7">
+              {[
+                { title: "Immediate Family", companions: allCompanions.filter((comp) => comp.isBuiltIn && !comp.isAnimeArchetype) },
+                { title: "Anime Characters", companions: allCompanions.filter((comp) => comp.isAnimeArchetype) },
+                { title: "Your Custom Companions", companions: allCompanions.filter((comp) => !comp.isBuiltIn) },
+              ].filter((group) => group.companions.length > 0).map((group) => (
+                <section key={group.title} className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-copper-champagne">{group.title}</h3>
+                    <div className="h-px flex-1 bg-white/10" />
+                  </div>
+                  <div className="space-y-4">
+                    {group.companions.map((comp) => {
                 const isDefault =
                   workspace.settings.defaultCompanionId === comp.id;
                 return (
@@ -1926,7 +1937,10 @@ export default function HeyYouCompanionApp() {
                     </div>
                   </div>
                 );
-              })}
+                    })}
+                  </div>
+                </section>
+              ))}
             </div>
           </div>
         )}
