@@ -1101,17 +1101,6 @@ export default function HeyYouCompanionApp() {
                         Snooze ({workspace.settings.defaultSnoozeMinutes}m)
                       </button>
                       <button
-                        onClick={() => {
-                          setEditingCompanionId(comp.id); setCompName(comp.isBuiltIn ? "" : comp.name);
-                          setCompRel(comp.relationship); setCompTemp(comp.temperament); setCompIntensity(comp.intensity);
-                          setCompLang(comp.language); setCompVoiceId(comp.voiceId); setCompStability(comp.stability);
-                          setCompSimilarity(comp.similarityBoost); setCompStyle(comp.styleExaggeration);
-                          setCompRate(comp.speakingRate); setCompNotes(comp.customInstructions);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className="px-3.5 py-1.5 rounded-xl bg-bg-surface fine-border text-xs text-text-secondary"
-                      >Customize</button>
-                      <button
                         onClick={() =>
                           triggerCompanionReminder(
                             nextUpcomingTask,
@@ -1885,6 +1874,17 @@ export default function HeyYouCompanionApp() {
                         {isDefault ? "Active Default" : "Set as Default"}
                       </button>
 
+                      <button
+                        onClick={() => {
+                          setEditingCompanionId(comp.id); setCompName(comp.isBuiltIn ? "" : comp.name);
+                          setCompRel(comp.relationship); setCompTemp(comp.temperament); setCompIntensity(comp.intensity);
+                          setCompLang(comp.language); setCompVoiceId(comp.voiceId); setCompStability(comp.stability);
+                          setCompSimilarity(comp.similarityBoost); setCompStyle(comp.styleExaggeration);
+                          setCompRate(comp.speakingRate); setCompNotes(comp.customInstructions);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl bg-bg-surface fine-border text-xs text-text-secondary"
+                      >Customize</button>
                       <button
                         onClick={() =>
                           triggerCompanionReminder(
