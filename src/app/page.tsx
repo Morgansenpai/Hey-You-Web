@@ -381,11 +381,37 @@ export default function HeyYouCompanionApp() {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(cleanText);
           utterance.rate = companion.speakingRate || 1.0;
-          if (companion.language === "Japanese") {
-            utterance.lang = "ja-JP";
-          } else {
-            utterance.lang = "en-GB";
-          }
+          const voiceOption = AVAILABLE_VOICES.find(
+            (voice) => voice.id === companion.voiceId
+          );
+          const targetLanguage =
+            companion.language === "Japanese" ? "ja-JP" : "en-GB";
+          utterance.lang = targetLanguage;
+
+          // Browser fallback: choose a system voice matching the selected voice's gender.
+          // Browser voices are device-provided and may not expose gender metadata.
+          const systemVoices = window.speechSynthesis.getVoices();
+          const genderNames =
+            voiceOption?.gender === "Female"
+              ? /female|zira|samantha|victoria|karen|moira|tessa|fiona|ava|jenny|aria|susan|hazel|sonia|libby|natasha|serena/i
+              : /male|david|mark|guy|james|daniel|alex|fred|tom|aaron|ryan|george|richard|thomas|lee|andrew|brian|oliver|arthur/i;
+          const languageVoices = systemVoices.filter((voice) =>
+            voice.lang.toLowerCase().startsWith(
+              companion.language === "Japanese" ? "ja" : "en"
+            )
+          );
+          const genderMatchedVoice = languageVoices.find((voice) =>
+            genderNames.test(voice.name)
+          );
+          const preferredVoice =
+            genderMatchedVoice ||
+            languageVoices.find((voice) =>
+              voice.name.toLowerCase().includes(
+                voiceOption?.gender.toLowerCase() || ""
+              )
+            ) ||
+            languageVoices[0];
+          if (preferredVoice) utterance.voice = preferredVoice;
           utterance.onstart = () => setOrbState("speaking");
           utterance.onend = () => setOrbState("idle");
           utterance.onerror = () => setOrbState("idle");
