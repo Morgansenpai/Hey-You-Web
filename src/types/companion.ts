@@ -1,6 +1,7 @@
 export type RelationshipType =
   | "Mom"
   | "Dad"
+  | "Brother"
   | "Boyfriend"
   | "Girlfriend"
   | "Best Friend"
